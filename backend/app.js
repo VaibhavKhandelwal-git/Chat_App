@@ -1,12 +1,12 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import path from "path";
+dotenv.config();
 
+import path from "path";
+import connectDB from "./src/db/db.js";
 import authRoutes from "./src/routes/auth.route.js";
 import messageRoutes from "./src/routes/message.route.js";
-
-dotenv.config();
 
 const app = express();
 const __dirname = path.resolve();
@@ -29,4 +29,7 @@ if(process.env.NODE_ENV === "production") {
     });
 }
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`)
+    connectDB();
+});
