@@ -55,7 +55,12 @@ const signup = asyncHandler(async (req, res) => {
     }
 
     //send user a joining email
-    await sendWelcomeEmail(newUser.email, newUser.fullName, process.env.CLIENT_URL);
+    try {
+        const joinedAt = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+        await sendWelcomeEmail(newUser.email, newUser.fullName, process.env.CLIENT_URL, joinedAt);
+    } catch (emailError) {
+        console.error("Welcome email failed (non-critical):", emailError.message);
+    }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(newUser._id);
 

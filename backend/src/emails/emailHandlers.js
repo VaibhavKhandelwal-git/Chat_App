@@ -2,12 +2,12 @@ import { resendClient, sender } from "../utils/resend.js";
 import { createWelcomeEmailTemplate } from "./emailTemplate.js";
 import apiError from "../utils/api.Error.js";
 
-export const sendWelcomeEmail = async (email, name, clientURL) => {
+export const sendWelcomeEmail = async (email, name, clientURL, joinedAt) => {
     const { data, error } = await resendClient.emails.send({
         from: `${sender.name} <${sender.email}>`,
         to: email,
         subject: "Welcome to Chatify!",
-        html: createWelcomeEmailTemplate(name, clientURL),
+        html: createWelcomeEmailTemplate(name, clientURL, joinedAt),
     });
 
     if (error) {
