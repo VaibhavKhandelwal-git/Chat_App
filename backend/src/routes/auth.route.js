@@ -1,12 +1,14 @@
 import express from "express";
-import { signup } from "../controllers/auth.conttroller.js";
+import { signup, login, logout, checkAuth } from "../controllers/auth.conttroller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 router.post("/signup", signup);
+router.post("/login", login);
+router.post("/logout", authMiddleware, logout);
+router.put("/update-profilePic", authMiddleware, upload.single("profilePic"), updateProfilePic);
 
-// login and logout controllers to be added later
-// router.post("/login", login);
-// router.post("/logout", logout);
+router.get("/check", authMiddleware, checkAuth);
 
 export default router;
