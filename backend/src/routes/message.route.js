@@ -2,9 +2,11 @@ import express from "express"
 
 const router = express.Router()
 
-router.get("/send", (_req, res) => {
-    res.send("send message endpoint")
-})
+router.use(authMiddleware)
+
+router.get("/contacts",getAllContacts)
+router.get("/chats",getAllChats)
+router.route("/:id").get(getMessagesByUserId).post(sendMessage)
 
 
 export default router
