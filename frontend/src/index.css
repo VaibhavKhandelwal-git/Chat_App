@@ -1,13 +1,2 @@
 @import "tailwindcss";
 @plugin "daisyui";
-
-@layer base {
-    html,
-    body,
-    #root {
-        background-color: #0c0608;
-        min-height: 100vh;
-        margin: 0;
-        padding: 0;
-    }
-}
