@@ -1,12 +1,13 @@
-import express from "express"
+import express from "express";
+import authMiddleware from "../middlewares/auth.middleware.js";
+import { getAllContacts, getAllChats, getMessagesByUserId, sendMessage } from "../controllers/message.controller.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.use(authMiddleware)
+router.use(authMiddleware);
 
-router.get("/contacts",getAllContacts)
-router.get("/chats",getAllChats)
-router.route("/:id").get(getMessagesByUserId).post(sendMessage)
+router.get("/contacts", getAllContacts);
+router.get("/chats", getAllChats);
+router.route("/:id").get(getMessagesByUserId).post(sendMessage);
 
-
-export default router
+export default router;

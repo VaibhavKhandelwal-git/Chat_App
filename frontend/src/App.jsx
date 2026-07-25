@@ -1,122 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Routes, Route } from "react-router";
+
+import ChatPage from "./pages/chatPage";
+import LoginPage from "./pages/loginPage";
+import SignupPage from "./pages/signupPage";
 
 function App() {
-  const [count, setCount] = useState(0)
+    return (
+        <div className="min-h-screen bg-[#0c0608] relative overflow-hidden">
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+            {/* Dot grid — barely perceptible, only visible on close inspection */}
+            <div className="absolute inset-0 bg-[radial-gradient(#7f1d1d0d_1px,transparent_1px)] bg-[size:22px_22px]" />
 
-      <div className="ticks"></div>
+            {/* Vignette — deepens edges, frames the composition */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_85%_at_50%_50%,transparent_45%,#0c060870)]" />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            {/* Crimson — primary ambient, top-left, softened and enlarged */}
+            <div className="absolute -top-64 -left-64 h-[60rem] w-[60rem] rounded-full bg-red-900/38 blur-[260px]" />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+            {/* Gold — warmth only, barely visible */}
+            <div className="absolute -top-16 -left-8 h-[26rem] w-[26rem] rounded-full bg-yellow-600/10 blur-[140px]" />
+
+            {/* Purple — depth shadow, bottom-right, blended softly */}
+            <div className="absolute -bottom-56 -right-56 h-[52rem] w-[52rem] rounded-full bg-purple-950/45 blur-[240px]" />
+
+            {/* Gold — second warmth accent, bottom-right, barely there */}
+            <div className="absolute -bottom-8 -right-8 h-[22rem] w-[22rem] rounded-full bg-yellow-600/9 blur-[130px]" />
+
+            {/* Central crimson — ties the composition together */}
+            <div className="absolute left-1/2 top-1/2 h-[38rem] w-[38rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-950/28 blur-[200px]" />
+
+            <div className="relative z-10 min-h-screen">
+                <Routes>
+                    <Route path="/" element={<ChatPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignupPage />} />
+                </Routes>
+            </div>
+
+        </div>
+    );
 }
 
-export default App
+export default App;
