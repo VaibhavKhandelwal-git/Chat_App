@@ -1,2 +1,30 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@property --border-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@theme {
+    /* 6 second smooth rotation */
+    --animate-border: border 6s linear infinite;
+
+    @keyframes border {
+        to {
+            --border-angle: 360deg;
+        }
+    }
+}
+
+@layer base {
+    html,
+    body,
+    #root {
+        background-color: #0c0608;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+}

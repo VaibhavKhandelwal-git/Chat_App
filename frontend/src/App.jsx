@@ -1,11 +1,26 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate } from "react-router";
+import { Toaster } from "react-hot-toast";
 
 import ChatPage from "./pages/chatPage";
 import LoginPage from "./pages/loginPage";
 import SignupPage from "./pages/signupPage";
+import PageLoader from "./components/PageLoader";
+import { useAuthStore } from "./store/useAuthStore.js";
+import { useEffect } from "react";
 
 function App() {
-    return (
+    
+  const {checkAuth, isCheckingAuth, authUser} = useAuthStore()
+
+  useEffect(()=>{
+    checkAuth()
+  },[checkAuth])
+  
+  if(isCheckingAuth){
+    return <PageLoader/>
+  }
+  
+  return (
         <div className="min-h-screen bg-[#0c0608] relative overflow-hidden">
 
             {/* Dot grid — barely perceptible, only visible on close inspection */}
@@ -31,12 +46,12 @@ function App() {
 
             <div className="relative z-10 min-h-screen">
                 <Routes>
-                    <Route path="/" element={<ChatPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
+                    <Route path="/" element={authUser ? <ChatPage /> : <Navigate to={"/login"}/>} />
+                    <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to={"/"}/>} />
+                    <Route path="/signup" element={!authUser ? <SignupPage /> : <Navigate to={"/"}/>} />
                 </Routes>
             </div>
-
+            <Toaster/>
         </div>
     );
 }
