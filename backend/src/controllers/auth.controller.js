@@ -5,7 +5,7 @@ import User from "../models/User.model.js";
 import setTokenCookies from "../utils/setTokenCookies.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import bcrypt from "bcryptjs";
-import { uploadToCloudinary } from "../utils/cloudinary.js";
+import  uploadToCloudinary  from "../utils/cloudinary.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {

@@ -20,6 +20,7 @@ function SignupPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Submit clicked");
         await signup(formData);
     };
 
