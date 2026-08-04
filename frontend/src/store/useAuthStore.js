@@ -11,7 +11,7 @@ export const useAuthStore = create((set) => ({
     checkAuth: async () => {
         try {
             const res = await axiosInstance.get("/auth/check");
-            set({ authUser: res.data });
+            set({ authUser: res.data.data });
         } catch (error) {
             console.log("Error in authCheck", error);
             set({ authUser: null });
@@ -45,6 +45,32 @@ export const useAuthStore = create((set) => ({
             toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             set({ isLoggingIn: false });
+        }
+    },
+
+    updateProfile: async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append("profilePic", file);
+
+            const res = await axiosInstance.put("/auth/update-profilePic", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            set({ authUser: res.data.data });
+            toast.success(res.data.message);
+        } catch (error) {
+            toast.error("Failed to update profile picture");
+        }
+    },
+
+    logout: async () => {
+        try {
+            await axiosInstance.post("/auth/logout");
+            set({ authUser: null });
+            toast.success("Logged out successfully");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Logout failed");
         }
     },
 }));

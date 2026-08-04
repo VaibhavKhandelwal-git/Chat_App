@@ -5,7 +5,7 @@ import User from "../models/User.model.js";
 import setTokenCookies from "../utils/setTokenCookies.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import bcrypt from "bcryptjs";
-import  uploadToCloudinary  from "../utils/cloudinary.js";
+import uploadToCloudinary, { deleteFromCloudinary } from "../utils/cloudinary.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -129,32 +129,36 @@ const logout = asyncHandler(async(req,res)=>{
        
 })
 
-const updateProfilePic = asyncHandler(async(req,res)=>{
-    
-    const profilePic = req.file?.path
+const updateProfilePic = asyncHandler(async (req, res) => {
 
-    if(!profilePic){
-        throw new apiError(400,"Profile picture is required")
+    const profilePic = req.file?.path;
+
+    if (!profilePic) {
+        throw new apiError(400, "Profile picture is required");
     }
 
-    const cloudinaryFile = await uploadToCloudinary(profilePic)
+    const cloudinaryFile = await uploadToCloudinary(profilePic);
 
-    if(!cloudinaryFile){
-        throw new apiError(500,"Failed to upload profile picture")
+    if (!cloudinaryFile) {
+        throw new apiError(500, "Failed to upload profile picture");
+    }
+
+    // delete old picture from cloudinary if one exists
+    const currentUser = await User.findById(req.user._id);
+    if (currentUser.profilePic) {
+        const oldPublicId = currentUser.profilePic.split("/").pop().split(".")[0];
+        await deleteFromCloudinary(oldPublicId);
     }
 
     const user = await User.findByIdAndUpdate(
-        req.user._id,{
-            $set:{
-                profilePic: cloudinaryFile.secure_url
-            }
-        },
+        req.user._id,
+        { $set: { profilePic: cloudinaryFile.secure_url } },
         { new: true }
-    ).select("-password -refreshToken")
+    ).select("-password -refreshToken");
 
     return res
-    .status(200)
-    .json(new apiResponse(200, user, "Profile picture updated successfully"));
+        .status(200)
+        .json(new apiResponse(200, user, "Profile picture updated successfully"));
 });
 
 const checkAuth = asyncHandler(async (req, res) => {

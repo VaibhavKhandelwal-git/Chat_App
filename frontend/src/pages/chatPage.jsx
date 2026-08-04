@@ -1,11 +1,43 @@
-import React from 'react'
+import { useChatStore } from "../store/useChatStore";
+
+import BorderAnimatedContainer from "../components/BorderAnimatedContainer";
+import ProfileHeader from "../components/ProfileHeader";
+import ActiveTabSwitch from "../components/ActiveTabSwitch";
+import ChatsList from "../components/ChatsList";
+import ContactList from "../components/ContactList";
+import ChatContainer from "../components/ChatContainer";
+import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
 
 function ChatPage() {
-  return (
-    <div>
+  const { activeTab, selectedUser } = useChatStore();
 
+  return (
+    <div className="w-full min-h-screen flex items-center justify-center p-3">
+      <div className="w-full max-w-6xl h-[780px]">
+        <BorderAnimatedContainer>
+
+          {/* Sidebar */}
+          <div className="w-80 flex flex-col bg-[#120b0d]/80 border-r border-white/5">
+            <ProfileHeader />
+
+            <div className="px-3 pt-2">
+              <ActiveTabSwitch />
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-3 py-2">
+              {activeTab === "chats" ? <ChatsList /> : <ContactList />}
+            </div>
+          </div>
+
+          {/* Chat Area */}
+          <div className="flex-1 flex flex-col bg-[#0d090a]/80">
+            {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+          </div>
+
+        </BorderAnimatedContainer>
+      </div>
     </div>
-  )
+  );
 }
 
-export default ChatPage
+export default ChatPage;
