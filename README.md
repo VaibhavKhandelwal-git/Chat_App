@@ -6,7 +6,7 @@ Chatify is a full-stack real-time chat application built with React, Node.js, Mo
 
 The backend provides REST APIs for user authentication, profile management, and messaging, while Socket.IO handles real-time event delivery. The frontend is built with React 19, Zustand for state management, and Tailwind CSS v4 with a custom dark theme.
 
-Repository: https://github.com/yourusername/chatify
+Repository: https://github.com/VaibhavKhandelwal-git/Chat_App
 
 ---
 
@@ -49,31 +49,18 @@ Repository: https://github.com/yourusername/chatify
 
 ## Tech Stack
 
-**Backend**
-- Node.js + Express.js
-- MongoDB + Mongoose
-- Socket.IO
-- JSON Web Tokens (JWT)
-- bcryptjs
-- Multer
-- Cloudinary
-- Resend
-- Arcjet (rate limiting, bot detection)
-- cookie-parser
-- CORS
-- dotenv
-- nodemon
-
-**Frontend**
-- React 19
-- Vite 8
-- Tailwind CSS v4
-- DaisyUI v5
-- Zustand
-- Axios
-- React Router v8
-- React Hot Toast
-- Lucide React
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 19, Vite 8, Tailwind CSS v4, DaisyUI v5 |
+| Backend | Node.js, Express.js |
+| Database | MongoDB, Mongoose |
+| Real-Time | Socket.IO |
+| Authentication | JWT, bcryptjs |
+| State Management | Zustand |
+| Media Storage | Cloudinary, Multer |
+| Email | Resend |
+| Security | Arcjet (rate limiting, bot detection) |
+| HTTP Client | Axios |
 
 ---
 
@@ -224,8 +211,8 @@ Save new URL to database
 
 **Clone**
 ```bash
-git clone https://github.com/yourusername/chatify.git
-cd chatify
+git clone https://github.com/VaibhavKhandelwal-git/Chat_App.git
+cd Chat_App
 ```
 
 **Backend**
