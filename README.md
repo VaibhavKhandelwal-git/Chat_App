@@ -49,18 +49,31 @@ Repository: https://github.com/yourusername/chatify
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 19, Vite 8, Tailwind CSS v4, DaisyUI v5 |
-| Backend | Node.js, Express.js |
-| Database | MongoDB, Mongoose |
-| Real-Time | Socket.IO |
-| Authentication | JWT, bcryptjs |
-| State Management | Zustand |
-| Media Storage | Cloudinary, Multer |
-| Email | Resend |
-| Security | Arcjet (rate limiting, bot detection) |
-| HTTP Client | Axios |
+**Backend**
+- Node.js + Express.js
+- MongoDB + Mongoose
+- Socket.IO
+- JSON Web Tokens (JWT)
+- bcryptjs
+- Multer
+- Cloudinary
+- Resend
+- Arcjet (rate limiting, bot detection)
+- cookie-parser
+- CORS
+- dotenv
+- nodemon
+
+**Frontend**
+- React 19
+- Vite 8
+- Tailwind CSS v4
+- DaisyUI v5
+- Zustand
+- Axios
+- React Router v8
+- React Hot Toast
+- Lucide React
 
 ---
 
