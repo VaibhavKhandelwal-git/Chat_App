@@ -6,7 +6,7 @@ Chatify is a full-stack real-time chat application built with React, Node.js, Mo
 
 The backend provides REST APIs for user authentication, profile management, and messaging, while Socket.IO handles real-time event delivery. The frontend is built with React 19, Zustand for state management, and Tailwind CSS v4 with a custom dark theme.
 
-Repository: https://github.com/yourusername/chatify
+Repository: https://github.com/VaibhavKhandelwal-git/Chat_App
 
 ---
 
