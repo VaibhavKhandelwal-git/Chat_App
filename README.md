@@ -170,6 +170,441 @@ Save new URL to database
 
 ---
 
+## Complete Application Flow
+
+```
+========================================
+CHATIFY COMPLETE APPLICATION FLOW
+========================================
+
+1. User Registers
+-----------------
+Frontend
+    │
+    ▼
+POST /api/auth/signup
+    │
+    ▼
+Validate Input
+    │
+    ▼
+Check if Email Already Exists
+    │
+    ▼
+Hash Password (bcrypt)
+    │
+    ▼
+Create User
+    │
+    ▼
+Generate Access Token
+Generate Refresh Token
+    │
+    ▼
+Save Refresh Token in Database
+    │
+    ▼
+Set HTTP-only Cookies
+    │
+    ▼
+Send Welcome Email (Resend)
+    │
+    ▼
+Return User
+    │
+    ▼
+Frontend stores authUser in Zustand
+    │
+    ▼
+connectSocket()
+
+========================================
+
+2. Existing User Opens Chatify
+------------------------------
+React App Loads
+    │
+    ▼
+checkAuth()
+    │
+    ▼
+GET /api/auth/check
+    │
+    ▼
+verifyJWT Middleware
+    │
+    ▼
+Read JWT Cookie
+    │
+    ▼
+Verify JWT
+    │
+    ▼
+Find User
+    │
+    ▼
+Return User
+    │
+    ▼
+Store authUser in Zustand
+    │
+    ▼
+connectSocket()
+
+========================================
+
+3. Socket Connection
+--------------------
+connectSocket()
+    │
+    ▼
+io(BASE_URL,{
+    withCredentials:true
+})
+    │
+    ▼
+Browser sends Handshake Request
+    │
+    ▼
+socketAuthMiddleware
+    │
+    ▼
+Read Cookies
+    │
+    ▼
+Extract JWT
+    │
+    ▼
+Verify JWT
+    │
+    ▼
+Find User
+    │
+    ▼
+socket.user = user
+socket.userId = user._id
+    │
+    ▼
+next()
+    │
+    ▼
+Socket Connection Accepted
+
+========================================
+
+4. Backend Stores Online User
+-----------------------------
+io.on("connection")
+    │
+    ▼
+userSocketMap[userId] = socket.id
+    │
+    ▼
+Broadcast Online Users
+
+io.emit(
+    "getOnlineUsers",
+    Object.keys(userSocketMap)
+)
+
+========================================
+
+5. Frontend Receives Online Users
+---------------------------------
+socket.on("getOnlineUsers")
+    │
+    ▼
+onlineUsers updated in Zustand
+    │
+    ▼
+React Re-renders
+    │
+    ▼
+Green Online Indicator Appears
+
+========================================
+
+6. Sidebar Loads
+----------------
+GET /messages/chats
+    │
+    ▼
+verifyJWT
+    │
+    ▼
+Conversation.find()
+    │
+    ▼
+Populate Participants
+    │
+    ▼
+Populate Last Message
+    │
+    ▼
+Sort by updatedAt
+    │
+    ▼
+Return Chats
+    │
+    ▼
+Store chats[] in Zustand
+    │
+    ▼
+Sidebar Renders
+
+========================================
+
+7. User Opens Conversation
+--------------------------
+Click Contact
+    │
+    ▼
+selectedUser changes
+    │
+    ▼
+useEffect Executes
+    │
+    ├────────► getMessagesByUserId()
+    │              │
+    │              ▼
+    │        GET /messages/:id
+    │              │
+    │              ▼
+    │        Find Conversation
+    │              │
+    │              ▼
+    │        Return Messages
+    │              │
+    │              ▼
+    │        Store messages[] in Zustand
+    │
+    └────────► subscribeToMessages()
+                   │
+                   ▼
+        socket.on("newMessage", callback)
+
+Now frontend is listening for new messages.
+
+========================================
+
+8. User Sends Message
+---------------------
+Type Message
+    │
+    ▼
+Click Send
+    │
+    ▼
+handleSendMessage()
+    │
+    ▼
+sendMessage()
+
+========================================
+
+9. Optimistic UI
+----------------
+Create optimisticMessage
+    │
+    ▼
+Append optimisticMessage to messages[]
+    │
+    ▼
+Update Zustand
+    │
+    ▼
+React Re-renders
+    │
+    ▼
+Message Instantly Appears
+
+========================================
+
+10. Save Message
+-----------------
+POST /messages/send/:id
+    │
+    ▼
+verifyJWT
+    │
+    ▼
+Find Conversation
+    │
+    ▼
+If Conversation Doesn't Exist
+Create Conversation
+    │
+    ▼
+Create Message
+    │
+    ▼
+Update Conversation.lastMessage
+    │
+    ▼
+Save Conversation
+    │
+    ▼
+Return Saved Message
+
+========================================
+
+11. Notify Receiver
+-------------------
+Find Receiver Socket
+
+receiverSocketId =
+getReceiverSocketId(receiverId)
+
+    │
+    ▼
+io.to(receiverSocketId).emit(
+    "newMessage",
+    message
+)
+
+========================================
+
+12. Sender Updates
+------------------
+Replace optimisticMessage
+with actual MongoDB message
+    │
+    ▼
+Update Zustand
+    │
+    ▼
+React Re-renders
+
+========================================
+
+13. Receiver Updates
+--------------------
+Receiver is already subscribed
+
+socket.on("newMessage")
+
+    │
+    ▼
+Backend Emits Message
+    │
+    ▼
+Callback Executes
+    │
+    ▼
+Append Message to messages[]
+    │
+    ▼
+Update Zustand
+    │
+    ▼
+React Re-renders
+    │
+    ▼
+Receiver Instantly Sees Message
+
+========================================
+
+14. Update Sidebar
+------------------
+After Successful Send
+
+getChats()
+
+    │
+    ▼
+GET /messages/chats
+    │
+    ▼
+Latest Conversation Returned
+    │
+    ▼
+Sidebar Updates
+    │
+    ▼
+Latest Chat Moves To Top
+    │
+    ▼
+Last Message Updated
+
+========================================
+
+15. Auto Scroll
+---------------
+messages[] changes
+    │
+    ▼
+useEffect([messages])
+    │
+    ▼
+messageEndRef.scrollIntoView()
+    │
+    ▼
+Scroll To Latest Message
+
+========================================
+
+16. Logout / Disconnect
+-----------------------
+Logout
+or
+Close Browser
+    │
+    ▼
+socket.disconnect()
+    │
+    ▼
+Backend receives
+socket.on("disconnect")
+    │
+    ▼
+delete userSocketMap[userId]
+    │
+    ▼
+io.emit(
+    "getOnlineUsers",
+    Object.keys(userSocketMap)
+)
+    │
+    ▼
+Everyone Updates
+    │
+    ▼
+User Appears Offline
+
+========================================
+
+ARCHITECTURE SUMMARY
+====================
+
+React Components
+        │
+        ▼
+Zustand Store
+        │
+        ├──────── REST APIs (Axios)
+        │               │
+        │               ▼
+        │         Express Controllers
+        │               │
+        │               ▼
+        │            MongoDB
+        │
+        └──────── Socket.IO
+                        │
+                        ▼
+               socketAuthMiddleware
+                        │
+                        ▼
+                  Real-Time Events
+                        │
+                        ▼
+              Instant UI Updates
+
+========================================
+```
+
+---
+
 ## API Modules
 
 | Module | Base Route | Description |
