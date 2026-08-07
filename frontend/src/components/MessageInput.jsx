@@ -15,6 +15,7 @@ function MessageInput() {
 
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const fileInputRef = useRef(null);
 
@@ -22,19 +23,23 @@ function MessageInput() {
 
     event.preventDefault();
 
-    if (!text.trim() && !imagePreview) return;
+    if (!text.trim() && !selectedFile) return;
 
     if (isSoundEnabled) {
       playRandomKeyStrokeSound();
     }
 
-    sendMessage({
-      text: text.trim(),
-      image: imagePreview,
-    });
+    const formData = new FormData();
+    formData.append("text", text.trim());
+    if (selectedFile) {
+      formData.append("image", selectedFile);
+    }
+
+    sendMessage(formData);
 
     setText("");
     setImagePreview(null);
+    setSelectedFile(null);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -52,6 +57,8 @@ function MessageInput() {
       return;
     }
 
+    setSelectedFile(file);
+
     const reader = new FileReader();
 
     reader.onloadend = () => {
@@ -64,6 +71,7 @@ function MessageInput() {
   const removeImage = () => {
 
     setImagePreview(null);
+    setSelectedFile(null);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -71,7 +79,7 @@ function MessageInput() {
   };
 
   return (
-    <div className="border-t border-[#2d1b1e] bg-[#120b0d] px-6 py-4">
+    <div className="flex-shrink-0 border-t border-[#2d1b1e] bg-[#120b0d] px-6 py-4">
 
       {imagePreview && (
 

@@ -5,6 +5,8 @@ import User from "../models/User.model.js";
 import apiResponse from "../utils/api.Response.js";
 import apiError from "../utils/api.Error.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import uploadToCloudinary from "../utils/cloudinary.js";
+import { io, getReceiverSocketId } from "../utils/socket.js";
 
 const getAllContacts = asyncHandler(async (req, res) => {
     const userId = req.user._id;
@@ -26,11 +28,28 @@ const getAllChats = asyncHandler(async (req, res) => {
         participants: { $in: [userId] },
         isGroup: false,
     })
-    .populate("participants", "-password -refreshToken")
-    .populate("lastMessage")
-    .sort({ updatedAt: -1 });
+        .populate("participants", "-password -refreshToken")
+        .populate("lastMessage")
+        .sort({ updatedAt: -1 });
 
-    res.status(200).json(new apiResponse(200, conversations, "Chats retrieved successfully"));
+    // Return the other participant's user object for each conversation
+    const chats = conversations
+        .map((conv) => {
+            const otherParticipant = conv.participants.find(
+                (p) => p && p._id.toString() !== userId.toString()
+            );
+
+            if (!otherParticipant) return null;
+
+            return {
+                ...otherParticipant.toObject(),
+                conversationId: conv._id,
+                lastMessage: conv.lastMessage,
+            };
+        })
+        .filter(Boolean);
+
+    res.status(200).json(new apiResponse(200, chats, "Chats retrieved successfully"));
 });
 
 const getMessagesByUserId = asyncHandler(async (req, res) => {
@@ -56,9 +75,18 @@ const getMessagesByUserId = asyncHandler(async (req, res) => {
 });
 
 const sendMessage = asyncHandler(async (req, res) => {
-    const { image, text } = req.body;
+    const { text } = req.body;
+    let imageUrl = "";
 
-    if (!image?.trim() && !text?.trim()) {
+    if (req.file) {
+        const cloudinaryFile = await uploadToCloudinary(req.file.path);
+        if (!cloudinaryFile) {
+            throw new apiError(500, "Failed to upload image");
+        }
+        imageUrl = cloudinaryFile.secure_url;
+    }
+
+    if (!imageUrl?.trim() && !text?.trim()) {
         throw new apiError(400, "Message cannot be empty");
     }
 
@@ -83,15 +111,20 @@ const sendMessage = asyncHandler(async (req, res) => {
         conversationId: conversation._id,
         sender: req.user._id,
         text: text?.trim() || "",
-        image: image?.trim() || "",
+        image: imageUrl || "",
     });
 
     if (!msg) {
         throw new apiError(500, "Failed to send message");
     }
 
-    conversation.lastMessage = msg._id;
-    await conversation.save();
+    conversation.lastMessage = msg._id
+    await conversation.save()
+
+    const receiverSocketId = getReceiverSocketId(id)
+    if (receiverSocketId) {
+        io.to(receiverSocketId).emit("receiveMessage", msg);
+    }
 
     res.status(201).json(new apiResponse(201, msg, "Message sent successfully"));
 });

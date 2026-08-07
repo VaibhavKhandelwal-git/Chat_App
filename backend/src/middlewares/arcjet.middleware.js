@@ -1,5 +1,6 @@
 import aj from "../utils/arcjet.js";
-import { isSpoofedBot } from "@arcjet/inspect";
+import asyncHandler from "../utils/asyncHandler.js";
+import apiResponse from "../utils/api.Response.js";
 
 const arcjetMiddleware = asyncHandler(async (req, res, next) => {
     const decision = await aj.protect(req);
@@ -24,3 +25,5 @@ const arcjetMiddleware = asyncHandler(async (req, res, next) => {
 
     next();
 });
+
+export default arcjetMiddleware;

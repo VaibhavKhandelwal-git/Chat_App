@@ -27,7 +27,7 @@ function ChatHeader() {
   }, [setSelectedUser]);
 
   return (
-    <div className="flex items-center justify-between border-b border-[#2d1b1e] bg-[#120b0d] px-6 py-4">
+    <div className="flex-shrink-0 flex items-center justify-between border-b border-[#2d1b1e] bg-[#120b0d] px-6 py-4">
 
       {/* Left Side */}
       <div className="flex items-center gap-3">
@@ -43,12 +43,7 @@ function ChatHeader() {
 
           {/* Online Indicator */}
           <span
-            className={`absolute bottom-0 right-0 size-3 rounded-full border-2 border-[#120b0d] ${
-              isOnline
-                ? "bg-emerald-500"
-                : "bg-zinc-600"
-            }`}
-          />
+            className={`absolute bottom-0 right-0 size-3 rounded-full border-2 border-[#120b0d] ${isOnline ? "bg-emerald-500" : "bg-zinc-600"}`}/>
 
         </div>
 

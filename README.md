@@ -6,7 +6,7 @@ Chatify is a full-stack real-time chat application built with React, Node.js, Mo
 
 The backend provides REST APIs for user authentication, profile management, and messaging, while Socket.IO handles real-time event delivery. The frontend is built with React 19, Zustand for state management, and Tailwind CSS v4 with a custom dark theme.
 
-Repository: https://github.com/VaibhavKhandelwal-git/Chat_App
+Repository: https://github.com/yourusername/chatify
 
 ---
 
@@ -32,6 +32,7 @@ Repository: https://github.com/VaibhavKhandelwal-git/Chat_App
 - Text and image message support
 - Online presence indicators
 - Auto-scroll to latest message
+- Chat list refresh behavior: chats are not refreshed on every send; the store refreshes chats only when switching conversations
 
 ### UI / UX
 - Cinematic dark theme (deep black, crimson glows, gold accents)
@@ -145,7 +146,10 @@ Signup / Login
 User selects image
     │
     ▼
-FormData sent to backend
+Frontend creates FormData (text + image file)
+    │
+    ▼
+POST → `/api/messages/:id` (or `/api/auth/update-profilePic` for profile pictures)
     │
     ▼
 Multer (disk storage, unique filename)
@@ -190,7 +194,7 @@ Save new URL to database
 | GET | `/contacts` | ✓ | All users except self |
 | GET | `/chats` | ✓ | Existing conversations |
 | GET | `/:id` | ✓ | Message history with user |
-| POST | `/:id` | ✓ | Send message to user |
+| POST | `/:id` | ✓ | Send message to user (multipart `image` + `text` allowed) |
 
 ---
 
@@ -211,8 +215,8 @@ Save new URL to database
 
 **Clone**
 ```bash
-git clone https://github.com/VaibhavKhandelwal-git/Chat_App.git
-cd Chat_App
+git clone https://github.com/yourusername/chatify.git
+cd chatify
 ```
 
 **Backend**
@@ -267,7 +271,6 @@ ARCJET_ENV=development
 Through this project I gained practical experience in:
 
 - Building secure authentication using JWT access and refresh tokens stored in HTTP-only cookies
-- Understanding why ESM import hoisting requires dotenv to be loaded as the first import, not inline
 - Designing a dual-token auth system where server-side revocation is possible at logout
 - Implementing real-time messaging with Socket.IO and managing event listener cleanup to prevent memory leaks
 - Handling multipart file uploads through Multer and Cloudinary, including lifecycle management of old assets
@@ -299,6 +302,13 @@ Through this project I gained practical experience in:
 GitHub: https://github.com/VaibhavKhandelwal-git
 
 ---
+
+## Known issues / recent fixes
+
+- Backend: `getAllChats()` now guards against `null` participants returned by `populate()` to avoid `toObject()` crashes; malformed conversation documents are filtered out of the chat list.
+- Frontend: layout fixes in `ChatContainer` and `chatPage` keep header and message input fixed; only the message list scrolls.
+- Image uploads: frontend sends `FormData` (key `image`) and backend uses `upload.single('image')` + Cloudinary. Ensure environment variables for Cloudinary are set.
+- Tailwind: a few class-name suggestions (e.g., `flex-shrink-0` → `shrink-0`) remain as lint warnings but are not runtime-blocking.
 
 ## License
 

@@ -5,7 +5,7 @@ import { useChatStore } from "../store/useChatStore";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
-import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
+import NoChatHistoryPlaceholder from "./NochatHistoryPlaceholder";
 import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton";
 
 function ChatContainer() {
@@ -18,14 +18,14 @@ function ChatContainer() {
 
   const authUser = useAuthStore((state) => state.authUser);
 
-  const messageEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
 
     subscribeToMessages();
 
-    return () => unsubscribeFromMessages();
+    return () => {unsubscribeFromMessages()}
   }, [
     selectedUser,
     getMessagesByUserId,
@@ -34,16 +34,17 @@ function ChatContainer() {
   ]);
 
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages]);
 
   return (
-    <>
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto px-6 py-6">
+      <div ref={messagesContainerRef} className="flex-1 min-h-0 overflow-y-auto px-6 py-6">
 
         {isMessagesLoading ? (
           <MessagesLoadingSkeleton />
@@ -56,7 +57,7 @@ function ChatContainer() {
               <div
                 key={message._id}
                 className={`flex ${
-                  message.senderId === authUser._id
+                  message.sender === authUser._id
                     ? "justify-end"
                     : "justify-start"
                 }`}
@@ -64,7 +65,7 @@ function ChatContainer() {
 
                 <div
                   className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-                    message.senderId === authUser._id
+                    message.sender === authUser._id
                       ? "bg-[#B38A2F] text-black"
                       : "border border-[#2d1b1e] bg-[#221316] text-[#F5F5F5]"
                   }`}
@@ -86,7 +87,7 @@ function ChatContainer() {
 
                   <p
                     className={`mt-2 text-right text-[11px] ${
-                      message.senderId === authUser._id
+                      message.sender === authUser._id
                         ? "text-black/70"
                         : "text-zinc-500"
                     }`}
@@ -102,15 +103,13 @@ function ChatContainer() {
               </div>
             ))}
 
-            <div ref={messageEndRef} />
-
           </div>
         )}
 
       </div>
 
       <MessageInput />
-    </>
+    </div>
   );
 }
 

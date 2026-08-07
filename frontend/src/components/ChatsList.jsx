@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore.js";
-
+import { useAuthStore } from "../store/useAuthStore.js";
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 import NoChatsFound from "./NoChatsFound";
 
@@ -9,7 +9,7 @@ function ChatsList() {
   const chats = useChatStore((state) => state.chats);
   const isUserLoading = useChatStore((state) => state.isUserLoading);
   const setSelectedUser = useChatStore((state) => state.setSelectedUser);
-  const onlineUsers = useChatStore((state) => state.onlineUsers);
+  const onlineUsers = useAuthStore((state) => state.onlineUsers);
 
   useEffect(() => {
     getMyChats();
