@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(() => axiosInstance(originalRequest));
+        });
       }
 
       isRefreshing = true;
@@ -42,8 +42,9 @@ axiosInstance.interceptors.response.use(
       return new Promise(async (resolve, reject) => {
         try {
           await axiosInstance.post("/auth/refresh");
-          processQueue(null, axiosInstance(originalRequest));
-          resolve(axiosInstance(originalRequest));
+          const retryResponse = await axiosInstance(originalRequest);
+          processQueue(null, retryResponse);
+          resolve(retryResponse);
         } catch (refreshError) {
           processQueue(refreshError, null);
           reject(refreshError);
