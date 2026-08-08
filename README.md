@@ -17,6 +17,7 @@ Repository: https://github.com/VaibhavKhandelwal-git/Chat_App
 - User Login with bcrypt password verification
 - JWT Access Token + Refresh Token architecture
 - HTTP-Only Cookie session management
+- Automatic access-token renewal in frontend Axios
 - Protected routes on frontend and backend
 - Session persistence via `checkAuth` on page load
 - Logout with server-side refresh token invalidation
@@ -127,6 +128,18 @@ Signup / Login
             │
             ▼
     On page load → checkAuth()
+            │
+            ├── Verify access token from cookie
+            ├── Fetch user from database
+            └── Hydrate Zustand store
+            │
+            ▼
+    If access token expires → POST /api/auth/refresh
+            │
+            ├── Verify refresh token from cookie
+            ├── Verify refresh token matches database
+            ├── Issue new access token and refresh token
+            └── Retry original request automatically
             │
             ├── Verify access token from cookie
             ├── Fetch user from database

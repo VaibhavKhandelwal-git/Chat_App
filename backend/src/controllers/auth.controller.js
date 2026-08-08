@@ -5,6 +5,7 @@ import User from "../models/User.model.js";
 import setTokenCookies from "../utils/setTokenCookies.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import uploadToCloudinary, { deleteFromCloudinary } from "../utils/cloudinary.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
@@ -129,6 +130,15 @@ const logout = asyncHandler(async(req,res)=>{
        
 })
 
+const refreshToken = asyncHandler(async (req, res) => {
+    const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshToken(req.user._id);
+    const userData = await User.findById(req.user._id).select("-password -refreshToken");
+
+    return setTokenCookies(res, accessToken, newRefreshToken)
+        .status(200)
+        .json(new apiResponse(200, userData, "Token refreshed successfully"));
+});
+
 const updateProfilePic = asyncHandler(async (req, res) => {
 
     const profilePic = req.file?.path;
@@ -168,4 +178,4 @@ const checkAuth = asyncHandler(async (req, res) => {
 });
 
 
-export { signup, login, logout, updateProfilePic, checkAuth };
+export { signup, login, logout, refreshToken, updateProfilePic, checkAuth };
